@@ -21,12 +21,11 @@
  */
 package appDomain;
 
-import shapes.*;
-import utilities.SortUtils;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import shapes.*;
+import utilities.SortUtils;
 
 public class AppDriver {
     public static void main(String[] args) {
@@ -34,36 +33,42 @@ public class AppDriver {
             printHelpAndExit();
         }
 
-        String inputFile = null;
-        char sortKey = 0;
-        char algorithm = 0;
+String inputFile = null;
+char sortKey = 0;
+char algorithm = 0;
 
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            switch (arg) {
-                case "-f":
-                    if (i + 1 < args.length) inputFile = args[++i];
-                    else usageError("Missing file path after -f");
-                    break;
-                case "-t":
-                    if (i + 1 < args.length) sortKey = args[++i].charAt(0);
-                    else usageError("Missing sort key after -t");
-                    break;
-                case "-s":
-                    if (i + 1 < args.length) algorithm = args[++i].charAt(0);
-                    else usageError("Missing algorithm code after -s");
-                    break;
-                default:
-                    if (arg.startsWith("-f")) inputFile = arg.substring(2);
-                    else if (arg.startsWith("-t")) sortKey = arg.charAt(2);
-                    else if (arg.startsWith("-s")) algorithm = arg.charAt(2);
-                    else usageError("Unknown option: " + arg);
-            }
-        }
-
+for (int i = 0; i < args.length; i++) {
+    String arg = args[i];
+    String argLower = arg.toLowerCase();
+    switch (argLower) {
+        case "-f":
+            if (i + 1 < args.length) inputFile = args[++i];
+            else usageError("Missing file path after -f");
+            break;
+        case "-t":
+            if (i + 1 < args.length) sortKey = args[++i].charAt(0);
+            else usageError("Missing sort key after -t");
+            break;
+        case "-s":
+            if (i + 1 < args.length) algorithm = args[++i].charAt(0);
+            else usageError("Missing algorithm code after -s");
+            break;
+        default:
+            if (argLower.startsWith("-f")) inputFile = arg.substring(2);
+            else if (argLower.startsWith("-t")) sortKey = arg.charAt(2);
+            else if (argLower.startsWith("-s")) algorithm = arg.charAt(2);
+            else usageError("Unknown option: " + arg);
+    }
+}
         if (inputFile == null) {
-            usageError("Missing -f <file>");
+        usageError("Missing -f <file>");
         }
+        if (sortKey == 0 || algorithm == 0) {
+            usageError("Missing sort key (-t) or algorithm (-s)");
+        }
+        sortKey = Character.toLowerCase(sortKey);
+        algorithm = Character.toLowerCase(algorithm);
+
 
         Shape3D[] shapes = loadShapes(inputFile);
         Sorter sorter = selectSorter(sortKey);
@@ -72,8 +77,12 @@ public class AppDriver {
         sorter.sort(shapes, algorithm);
         long duration = (System.nanoTime() - start) / 1_000_000;
 
-        System.out.println("Sort time: " + duration + " ms");
+        //System.out.println("Sort time: " + duration + " ms");
+        String algName = getAlgorithmName(algorithm);
+        // System.out.println( algName + " Run Time was: " + duration + " ms");
         printResults(shapes);
+        //String algName = getAlgorithmName(algorithm);
+        System.out.println( algName + " Run Time was: " + duration + " ms");
     }
 
     private static boolean hasHelpFlag(String[] args) {
@@ -84,8 +93,12 @@ public class AppDriver {
     }
 
     private static Shape3D[] loadShapes(String filename) {
+        if (!filename.contains("/") && !filename.contains("\\")) {
+        filename = "res/" + filename;
+    }
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             int count = Integer.parseInt(reader.readLine().trim());
+            //System.out.println("Number of shapes to read: " + count); // Debugging line
             Shape3D[] arr = new Shape3D[count];
             for (int i = 0; i < count; i++) {
                 String[] parts = reader.readLine().trim().split("\\s+");
@@ -127,12 +140,24 @@ public class AppDriver {
     }
 
     private static void printResults(Shape3D[] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            if (i == 0 || i == arr.length - 1 || (i + 1) % 1000 == 0) {
-                System.out.printf("Item %d: %s%n", i + 1, arr[i]);
-            }
+    int n = arr.length;
+    for (int i = 0; i < n; i++) {
+        if (i == 0) {
+            System.out.println("Item [first]:");
+        } else if (i == n - 1) {
+            System.out.println("Item [last]:");
+        } else if ((i + 1) % 1000 == 0) {
+            System.out.printf("Item [%d-th]:%n", i + 1);
+        } else {
+            continue;
         }
+        System.out.println(arr[i].toFormattedString());
+        
+        //System.out.printf("Total items printed: %d%n", n);
+        
     }
+}
+
 
     private static void usageError(String msg) {
         System.err.println("Error: " + msg);
@@ -192,6 +217,17 @@ public class AppDriver {
                 case 'z': SortUtils.heapSortByBaseArea(arr); break;
                 default: usageError("Invalid algorithm: " + alg);
             }
+        }
+    }
+    public static String getAlgorithmName(char algorithm) {
+        switch (algorithm) {
+            case 'b': return "Bubble Sort";
+            case 'i': return "Insertion Sort";
+            case 's': return "Selection Sort";
+            case 'm': return "Merge Sort";
+            case 'q': return "Quick Sort";
+            case 'z': return "Heap Sort";
+            default:  return "Unknown Algorithm";
         }
     }
 }

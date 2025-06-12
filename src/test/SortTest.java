@@ -233,7 +233,6 @@ public class SortTest {
         benchmarkPrinter.printResults();
         // End of heap sort tests
         benchmarkPrinter.clear();
-
     }
 
     public static void printShapes(String title, Shape3D[] shapes) {

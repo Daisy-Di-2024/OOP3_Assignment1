@@ -1,0 +1,44 @@
+My Heap Sort
+
+Heap Sort Description:
+Heap sort aims to put a list of things in descending or ascending order. This sort method uses a special tree named "heap" to help sorting. It first pick the biggest element as the root of tree, then pick and place the second largest element on the root, and loop this process until everything follows required order. Then the root starts to swap its place with the top, reducing the heap size by one. The second largest element swaps with the second smallest element, reducing the heap size as before. The rest of elements also follow this order until the heap size reduced to 1.
+
+Pseudocode:
+
+heapSort(array):
+    buildMaxHeap(array)         
+    for end = length(array)-1 down to 1:
+        swap(array[0], array[end])    
+        heapSize = heapSize - 1
+        maxHeapify(array, 0, heapSize)
+
+buildMaxHeap(array):
+    heapSize = length(array)
+    for i = floor(heapSize/2) down to 0:
+        maxHeapify(array, i, heapSize)
+
+maxHeapify(array, i, heapSize):
+    left = 2*i + 1
+    right = 2*i + 2
+    largest = i
+    if left < heapSize and array[left] > array[largest]:
+        largest = left
+    if right < heapSize and array[right] > array[largest]:
+        largest = right
+    if largest != i:
+        swap(array[i], array[largest])
+        maxHeapify(array, largest, heapSize)
+
+
+
+Complexity Analysis:
+
+ buildMaxHeap:
+  Time: O(n)
+ maxHeapify:
+  Time: log n
+ heapsort
+  Time: O(n log n)
+
+Counting Analysis：
+O(n) + n*O(log n) = O(n log n)
