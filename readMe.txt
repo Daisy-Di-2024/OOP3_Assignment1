@@ -58,7 +58,7 @@ java -jar Sort.jar -f <file_path> -t <property> -s <algorithm>
   - `z` = Heap Sort (custom)
 
 **Notes:**  
-- Arguments are case-sensitive and should be lowercase.  
+- Arguments are case insensitive
 - You can specify flags in any order.  
 - Both `-f filename` and `-ffilename` styles are supported.
 
@@ -67,7 +67,6 @@ java -jar Sort.jar -f <file_path> -t <property> -s <algorithm>
 ----------------------------
 
 ```bash
-java -jar Sort.jar -f res/shapes1.txt -t h -s q
-java -jar Sort.jar -s m -f res/shapes2.txt -t v
-java -jar Sort.jar -t a -s z -f "res/shapesBig.txt"
+java -jar Sort.jar -f shapes1.txt -T h -s Q
+java -jar Sort.jar -fshapes1.txt -Tv -Sb
 
