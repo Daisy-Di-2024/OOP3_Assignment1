@@ -35,4 +35,8 @@ public abstract class Shape3D implements Comparable<Shape3D> {
                 ", volume=" + calcVolume() +
                 '}';
     }
+    public String toFormattedString() {
+    return String.format("%-15s | Height: %8.2f | Base Area: %10.2f | Volume: %10.2f",
+                         this.getClass().getSimpleName(), height, calcBaseArea(), calcVolume());
+}
 }
