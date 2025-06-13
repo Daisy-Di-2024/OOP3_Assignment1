@@ -33,42 +33,51 @@ public class AppDriver {
             printHelpAndExit();
         }
 
-String inputFile = null;
-char sortKey = 0;
-char algorithm = 0;
+        String inputFile = null;
+        char sortKey = 0;
+        char algorithm = 0;
 
-for (int i = 0; i < args.length; i++) {
-    String arg = args[i];
-    String argLower = arg.toLowerCase();
-    switch (argLower) {
-        case "-f":
-            if (i + 1 < args.length) inputFile = args[++i];
-            else usageError("Missing file path after -f");
-            break;
-        case "-t":
-            if (i + 1 < args.length) sortKey = args[++i].charAt(0);
-            else usageError("Missing sort key after -t");
-            break;
-        case "-s":
-            if (i + 1 < args.length) algorithm = args[++i].charAt(0);
-            else usageError("Missing algorithm code after -s");
-            break;
-        default:
-            if (argLower.startsWith("-f")) inputFile = arg.substring(2);
-            else if (argLower.startsWith("-t")) sortKey = arg.charAt(2);
-            else if (argLower.startsWith("-s")) algorithm = arg.charAt(2);
-            else usageError("Unknown option: " + arg);
-    }
-}
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            String argLower = arg.toLowerCase();
+            switch (argLower) {
+                case "-f":
+                    if (i + 1 < args.length)
+                        inputFile = args[++i];
+                    else
+                        usageError("Missing file path after -f");
+                    break;
+                case "-t":
+                    if (i + 1 < args.length)
+                        sortKey = args[++i].charAt(0);
+                    else
+                        usageError("Missing sort key after -t");
+                    break;
+                case "-s":
+                    if (i + 1 < args.length)
+                        algorithm = args[++i].charAt(0);
+                    else
+                        usageError("Missing algorithm code after -s");
+                    break;
+                default:
+                    if (argLower.startsWith("-f"))
+                        inputFile = arg.substring(2);
+                    else if (argLower.startsWith("-t"))
+                        sortKey = arg.charAt(2);
+                    else if (argLower.startsWith("-s"))
+                        algorithm = arg.charAt(2);
+                    else
+                        usageError("Unknown option: " + arg);
+            }
+        }
         if (inputFile == null) {
-        usageError("Missing -f <file>");
+            usageError("Missing -f <file>");
         }
         if (sortKey == 0 || algorithm == 0) {
             usageError("Missing sort key (-t) or algorithm (-s)");
         }
         sortKey = Character.toLowerCase(sortKey);
         algorithm = Character.toLowerCase(algorithm);
-
 
         Shape3D[] shapes = loadShapes(inputFile);
         Sorter sorter = selectSorter(sortKey);
@@ -77,28 +86,29 @@ for (int i = 0; i < args.length; i++) {
         sorter.sort(shapes, algorithm);
         long duration = (System.nanoTime() - start) / 1_000_000;
 
-        //System.out.println("Sort time: " + duration + " ms");
+        // System.out.println("Sort time: " + duration + " ms");
         String algName = getAlgorithmName(algorithm);
         // System.out.println( algName + " Run Time was: " + duration + " ms");
-        printResults(shapes);
-        //String algName = getAlgorithmName(algorithm);
-        System.out.println( algName + " Run Time was: " + duration + " ms");
+        printResults(shapes, sortKey);
+        // String algName = getAlgorithmName(algorithm);
+        System.out.println(algName + " Run Time was: " + duration + " ms");
     }
 
     private static boolean hasHelpFlag(String[] args) {
         for (String arg : args) {
-            if ("--help".equals(arg) || "-help".equals(arg)) return true;
+            if ("--help".equals(arg) || "-help".equals(arg))
+                return true;
         }
         return false;
     }
 
     private static Shape3D[] loadShapes(String filename) {
         if (!filename.contains("/") && !filename.contains("\\")) {
-        filename = "res/" + filename;
-    }
+            filename = "res/" + filename;
+        }
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             int count = Integer.parseInt(reader.readLine().trim());
-            //System.out.println("Number of shapes to read: " + count); // Debugging line
+            // System.out.println("Number of shapes to read: " + count); // Debugging line
             Shape3D[] arr = new Shape3D[count];
             for (int i = 0; i < count; i++) {
                 String[] parts = reader.readLine().trim().split("\\s+");
@@ -116,13 +126,20 @@ for (int i = 0; i < args.length; i++) {
 
     private static Shape3D createShape(String type, double dim1, double dim2) {
         switch (type) {
-            case "cylinder":        return new Cylinder(dim1, dim2);
-            case "cone":            return new Cone(dim1, dim2);
-            case "pyramid":         return new Pyramid(dim1, dim2);
-            case "squareprism":     return new SquarePrism(dim1, dim2);
-            case "triangularprism": return new TriangularPrism(dim1, dim2);
-            case "pentagonalprism": return new PentagonalPrism(dim1, dim2);
-            case "octagonalprism":  return new OctagonalPrism(dim1, dim2);
+            case "cylinder":
+                return new Cylinder(dim1, dim2);
+            case "cone":
+                return new Cone(dim1, dim2);
+            case "pyramid":
+                return new Pyramid(dim1, dim2);
+            case "squareprism":
+                return new SquarePrism(dim1, dim2);
+            case "triangularprism":
+                return new TriangularPrism(dim1, dim2);
+            case "pentagonalprism":
+                return new PentagonalPrism(dim1, dim2);
+            case "octagonalprism":
+                return new OctagonalPrism(dim1, dim2);
             default:
                 System.err.println("Unknown shape: " + type);
                 System.exit(1);
@@ -132,32 +149,59 @@ for (int i = 0; i < args.length; i++) {
 
     private static Sorter selectSorter(char key) {
         switch (key) {
-            case 'h': return new HeightSorter();
-            case 'v': return new VolumeSorter();
-            case 'a': return new BaseAreaSorter();
-            default:  usageError("Invalid sort key: " + key); return null;
+            case 'h':
+                return new HeightSorter();
+            case 'v':
+                return new VolumeSorter();
+            case 'a':
+                return new BaseAreaSorter();
+            default:
+                usageError("Invalid sort key: " + key);
+                return null;
         }
     }
 
-    private static void printResults(Shape3D[] arr) {
-    int n = arr.length;
-    for (int i = 0; i < n; i++) {
-        if (i == 0) {
-            System.out.println("Item [first]:");
-        } else if (i == n - 1) {
-            System.out.println("Item [last]:");
-        } else if ((i + 1) % 1000 == 0) {
-            System.out.printf("Item [%d-th]:%n", i + 1);
-        } else {
-            continue;
-        }
-        System.out.println(arr[i].toFormattedString());
-        
-        //System.out.printf("Total items printed: %d%n", n);
-        
-    }
-}
+    private static void printResults(Shape3D[] arr, char sortKey) {
+        int n = arr.length;
+        for (int i = 0; i < n; i++) {
+            String label = null;
 
+            if (i == 0) {
+                label = "Item [first]:";
+            } else if (i == n - 1) {
+                label = "Item [last]:";
+            } else if ((i + 1) % 1000 == 0) {
+                label = String.format("Item [%d-th]:", i + 1);
+            } else {
+                continue;
+            }
+
+            String typeName = arr[i].getClass().getSimpleName();
+            double value = 0.0;
+            String sortLabel = "";
+
+            switch (sortKey) {
+                case 'h':
+                    value = arr[i].getHeight();
+                    sortLabel = "Height";
+                    break;
+                case 'v':
+                    value = arr[i].calcVolume();
+                    sortLabel = "Volume";
+                    break;
+                case 'a':
+                    value = arr[i].calcBaseArea();
+                    sortLabel = "Area";
+                    break;
+            }
+
+            System.out.printf("%-20s  %-25s  %s: %.10E%n",
+                    label, "shapes." + typeName, sortLabel, value);
+
+            // System.out.printf("Total items printed: %d%n", n);
+
+        }
+    }
 
     private static void usageError(String msg) {
         System.err.println("Error: " + msg);
@@ -181,13 +225,26 @@ for (int i = 0; i < args.length; i++) {
     private static class HeightSorter implements Sorter {
         public void sort(Shape3D[] arr, char alg) {
             switch (alg) {
-                case 'b': SortUtils.bubbleSortByHeight(arr); break;
-                case 'i': SortUtils.insertionSortByHeight(arr); break;
-                case 's': SortUtils.selectionSortByHeight(arr); break;
-                case 'm': SortUtils.mergeSortByHeight(arr); break;
-                case 'q': SortUtils.quickSortByHeight(arr); break;
-                case 'z': SortUtils.heapSortByHeight(arr); break;
-                default: usageError("Invalid algorithm: " + alg);
+                case 'b':
+                    SortUtils.bubbleSortByHeight(arr);
+                    break;
+                case 'i':
+                    SortUtils.insertionSortByHeight(arr);
+                    break;
+                case 's':
+                    SortUtils.selectionSortByHeight(arr);
+                    break;
+                case 'm':
+                    SortUtils.mergeSortByHeight(arr);
+                    break;
+                case 'q':
+                    SortUtils.quickSortByHeight(arr);
+                    break;
+                case 'z':
+                    SortUtils.heapSortByHeight(arr);
+                    break;
+                default:
+                    usageError("Invalid algorithm: " + alg);
             }
         }
     }
@@ -195,13 +252,26 @@ for (int i = 0; i < args.length; i++) {
     private static class VolumeSorter implements Sorter {
         public void sort(Shape3D[] arr, char alg) {
             switch (alg) {
-                case 'b': SortUtils.bubbleSortByVolume(arr); break;
-                case 'i': SortUtils.insertionSortByVolume(arr); break;
-                case 's': SortUtils.selectionSortByVolume(arr); break;
-                case 'm': SortUtils.mergeSortByVolume(arr); break;
-                case 'q': SortUtils.quickSortByVolume(arr); break;
-                case 'z': SortUtils.heapSortByVolume(arr); break;
-                default: usageError("Invalid algorithm: " + alg);
+                case 'b':
+                    SortUtils.bubbleSortByVolume(arr);
+                    break;
+                case 'i':
+                    SortUtils.insertionSortByVolume(arr);
+                    break;
+                case 's':
+                    SortUtils.selectionSortByVolume(arr);
+                    break;
+                case 'm':
+                    SortUtils.mergeSortByVolume(arr);
+                    break;
+                case 'q':
+                    SortUtils.quickSortByVolume(arr);
+                    break;
+                case 'z':
+                    SortUtils.heapSortByVolume(arr);
+                    break;
+                default:
+                    usageError("Invalid algorithm: " + alg);
             }
         }
     }
@@ -209,25 +279,46 @@ for (int i = 0; i < args.length; i++) {
     private static class BaseAreaSorter implements Sorter {
         public void sort(Shape3D[] arr, char alg) {
             switch (alg) {
-                case 'b': SortUtils.bubbleSortByBaseArea(arr); break;
-                case 'i': SortUtils.insertionSortByBaseArea(arr); break;
-                case 's': SortUtils.selectionSortByBaseArea(arr); break;
-                case 'm': SortUtils.mergeSortByBaseArea(arr); break;
-                case 'q': SortUtils.quickSortByBaseArea(arr); break;
-                case 'z': SortUtils.heapSortByBaseArea(arr); break;
-                default: usageError("Invalid algorithm: " + alg);
+                case 'b':
+                    SortUtils.bubbleSortByBaseArea(arr);
+                    break;
+                case 'i':
+                    SortUtils.insertionSortByBaseArea(arr);
+                    break;
+                case 's':
+                    SortUtils.selectionSortByBaseArea(arr);
+                    break;
+                case 'm':
+                    SortUtils.mergeSortByBaseArea(arr);
+                    break;
+                case 'q':
+                    SortUtils.quickSortByBaseArea(arr);
+                    break;
+                case 'z':
+                    SortUtils.heapSortByBaseArea(arr);
+                    break;
+                default:
+                    usageError("Invalid algorithm: " + alg);
             }
         }
     }
+
     public static String getAlgorithmName(char algorithm) {
         switch (algorithm) {
-            case 'b': return "Bubble Sort";
-            case 'i': return "Insertion Sort";
-            case 's': return "Selection Sort";
-            case 'm': return "Merge Sort";
-            case 'q': return "Quick Sort";
-            case 'z': return "Heap Sort";
-            default:  return "Unknown Algorithm";
+            case 'b':
+                return "Bubble Sort";
+            case 'i':
+                return "Insertion Sort";
+            case 's':
+                return "Selection Sort";
+            case 'm':
+                return "Merge Sort";
+            case 'q':
+                return "Quick Sort";
+            case 'z':
+                return "Heap Sort";
+            default:
+                return "Unknown Algorithm";
         }
     }
 }

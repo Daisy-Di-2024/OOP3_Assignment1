@@ -6,6 +6,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ShapeTest",
+            "request": "launch",
+            "mainClass": "test.ShapeTest",
+            "projectName": "OOP3_Assignment1_13b993f"
+        },
+        {
+            "type": "java",
+            "name": "SortTest",
+            "request": "launch",
+            "mainClass": "test.SortTest",
+            "projectName": "OOP3_Assignment1_13b993f"
+        },
+        {
+            "type": "java",
+            "name": "AppDriver",
+            "request": "launch",
+            "mainClass": "appDomain.AppDriver",
+            "projectName": "OOP3_Assignment1_13b993f"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
